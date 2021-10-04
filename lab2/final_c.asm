@@ -183,10 +183,16 @@ data32 segment para 'data'
     mask_slave  db 0        
 
 	; Таблица символов ASCII для перевода из скан кода в код ASCII.
-    asciimap   db 0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 45, 61, 0, 0
-    db 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 91, 93, 0, 0, 65, 83
-    db 68, 70, 71, 72, 74, 75, 76, 59, 39, 96, 0, 92, 90, 88, 67
-    db 86, 66, 78, 77, 44, 46, 47
+    ; asciimap   db 0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 45, 61, 0, 0
+    ; db 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 91, 93, 0, 0, 65, 83
+    ; db 68, 70, 71, 72, 74, 75, 76, 59, 39, 96, 0, 92, 90, 88, 67
+    ; db 86, 66, 78, 77, 44, 46, 47
+	
+	asciimap db	0,1Bh,'1','2','3','4','5','6','7','8','9','0','-','=',8
+							 db ' ','q','w','e','r','t','y','u','i','o','p','[',']','$'
+							 db ' ','a','s','d','f','g','h','j','k','l',';','""',0
+							 db '\','z','x','c','v','b','n','m',',','.','/',0,0,0,' ',0,0
+							 db 0,0,0,0,0,0,0,0,0,0,0,0
 
     flag_enter_pr db 0	;флаг нажатия клавиши для перехода
     cnt_time      db 0  ;счетчик таймера       
@@ -211,6 +217,8 @@ data32 segment para 'data'
 	rm_msg_1 db 'Start in real mode', 13, 10, '$'
 	rm_msg_wait db 'Press any key to enter protected mode...', 13, 10, '$'
 	rm_msg_2 db 'Back in real mode', 13, 10, '$'
+	
+	sub_caps db 0
 
     data_size = $-gdt_null 
 data32 ends
@@ -318,104 +326,67 @@ print_mem:
 		push es
 		push ds
 
-		in	al,60h 			; Прочитать скан-код нажатой клавиши из порта клавиатуры
-		cmp	al,1Ch 			; Сравниваем с кодом Enter
-		je enter_pressed 	; Если Enter, выходим в реальный режим
+		in	al, 60h 			; чтение скан-кода нажатой клавиши из порта клавиатуры
+		cmp	al, 1Ch 			; нажат Enter?
+		je enter_pressed 	
 		
-		cmp al,39h 			; Сравним какой скан-код пришел: обслуживаемой клавиши или нет?
-		ja skip_translate 	
-		mov bx, data32s 	; Если да
-		mov ds,bx 			; DS:EBX - таблица для перевода скан-кода
-		mov ebx,offset asciimap ;scan2ascii ; в ASCII
-		xlatb 				; Преобразовать
-		mov bx,data4gbs	
-		mov es,bx 			; ES:EBX - адрес текущей
-		mov ebx,syml_pos 	; позиции на экране
-		cmp al,8 			; Если не была нажата Backspace
+		mov bx, data32s 	
+		mov ds, bx 			
+		
+		cmp al, 3Ah				; нажат Caps Lock?
+		jne continue_int09 
+		add word ptr sub_caps, 32
+		cmp sub_caps, 32
+		ja continue_int09
+		mov sub_caps, 0
+	
+
+	continue_int09:
+		cmp al, 39h 			; скан-код обслуживаемой клавиши?
+		ja exit_int09 	
+		
+		mov ebx, offset asciimap 
+		xlatb 				; преобразовать в ASCII
+		
+		mov bx, video16s	
+		mov es, bx 			
+		mov ebx, syml_pos 	
+		cmp al, 8 			; нажат Backspace?
 		je bs_pressed
-		mov es:[ebx+0B8000h],al ; Вывести символ на экран
-		add dword ptr syml_pos,2 ; Увеличить адрес позиции на 2
+		
+		sub al, byte ptr sub_caps
+		; add byte ptr sub_caps, 1
+		; mov al, byte ptr sub_caps
+		
+		mov es:[ebx], al 	
+		add dword ptr syml_pos, 2 
 		jmp short exit_int09
-	bs_pressed: 			; Иначе
-		mov al,' ' 			; нарисовать пробел
-		sub ebx,2 			; в позиции предыдущего символа
-		mov es:[ebx+0B8000h],al ; Вывести символ на экран
-		mov syml_pos,ebx ; и сохранить адрес предыдущего символа как текущий
+		
+	bs_pressed: 			; нажат Backspace: нарисовать пробел в позиции предыдущего символа
+		mov al, ' ' 			
+		sub ebx, 2 		
+		mov es:[ebx], al 
+		mov syml_pos, ebx 	
 		jmp short exit_int09
 	
-	; Сюда передается управление из обработчика int09h при нажатии Enter
 	enter_pressed:
-		or flag_enter_pr, 1			; если Enter, устанавливаем флаг
+		or flag_enter_pr, 1			
 		
 	exit_int09:
 		; Разрешить работу клавиатуры
-		in	al,61h
-		or	al,80h
-		out	61h,al
-		; Посылаем сигнал EOI контроллеру прерываний
-		mov	al,20h
-		out	20h,al
+		in	al, 61h
+		or	al, 80h
+		out	61h, al
+		
+		mov	al, 20h
+		out	20h, al
 
-		; Восстановить регистры и выйти
 		pop ds
 		pop es
 		pop ebx
 		pop	eax
 		iretd
 	new_int09 endp
-
-	; ; Обработчик прерывания клавиатуры
-    ; new_int09 proc ;uses eax ebx edx
-		; push eax
-		; push ebx
-		; push edx
-		
-		; ;Порт 60h при чтении содержит скан-код последней нажатой клавиши.
-        ; in  al, 60h
-        ; cmp al, 1Ch ; Сравниваем с кодом Enter
-
-        ; jne print_value         
-        ; or flag_enter_pr, 1		; если Enter, устанавливаем флаг
-        ; jmp allow_handle_keyboard
-
-    ; print_value:
-		; ;(скан-код отпускания клавиши равен скан-коду нажатия плюс 80h)
-		; ; ja:op1>op2, то есть переход, если скан-код сообщает об отпускании клавиши 
-		
-        ; cmp al, 80h  
-        ; ja allow_handle_keyboard     
-
-        ; xor ah, ah   
-        ; xor ebx, ebx
-        ; mov bx, ax
-
-        ; mov dh, param
-        ; mov dl, asciimap[ebx]   
-        ; mov ebx, syml_pos   
-        ; mov es:[ebx], dx
-
-        ; add ebx, 2          
-        ; mov syml_pos, ebx
-
-    ; allow_handle_keyboard:
-		; ;старший бит порта 61h = 1, клавиатура  заблокирована, 0 - разблокирована.
-		; ;разблокировка клавиатуры
-		; in  al, 61h 
-        ; or  al, 80h 
-        ; out 61h, al 
-		; ;сброс???
-        ; ; and al, 7Fh 
-        ; ; out 61h, al
-
-		; ;необходимо сбросить контроллер прерываний
-        ; mov al, 20h 
-        ; out 20h, al
-		
-		; pop edx
-		; pop ebx
-		; pop eax
-        ; iretd
-    ; new_int09 endp
 
 
     count_memory proc ;uses fs eax ebx
