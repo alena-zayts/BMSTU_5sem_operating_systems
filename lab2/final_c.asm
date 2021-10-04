@@ -218,7 +218,7 @@ data32 segment para 'data'
 	rm_msg_wait db 'Press any key to enter protected mode...', 13, 10, '$'
 	rm_msg_2 db 'Back in real mode', 13, 10, '$'
 	
-	sub_caps db 0
+	sub_caps db 0h
 
     data_size = $-gdt_null 
 data32 ends
@@ -330,34 +330,39 @@ print_mem:
 		cmp	al, 1Ch 			; нажат Enter?
 		je enter_pressed 	
 		
-		mov bx, data32s 	
-		mov ds, bx 			
+	check_caps_on:
+		cmp	al, 03Ah 			; нажат Caps (вкл)?
+		jne check_caps_off
+		mov bl, 32
+		mov byte ptr sub_caps, bl
 		
-		cmp al, 3Ah				; нажат Caps Lock?
-		jne continue_int09 
-		add word ptr sub_caps, 32
-		cmp sub_caps, 32
-		ja continue_int09
-		mov sub_caps, 0
+	check_caps_off:
+		cmp	al, 0BAh 			; нажат Caps (выкл=вкл+80h)?
+		jne translate_int09
+		mov bl, 0
+		mov byte ptr sub_caps, bl
 	
 
-	continue_int09:
+	translate_int09:
 		cmp al, 39h 			; скан-код обслуживаемой клавиши?
 		ja exit_int09 	
 		
 		mov ebx, offset asciimap 
-		xlatb 				; преобразовать в ASCII
+		xlatb 					; преобразовать в ASCII
 		
-		mov bx, video16s	
-		mov es, bx 			
 		mov ebx, syml_pos 	
-		cmp al, 8 			; нажат Backspace?
+		cmp al, 8 				; нажат Backspace?
 		je bs_pressed
 		
-		sub al, byte ptr sub_caps
-		; add byte ptr sub_caps, 1
-		; mov al, byte ptr sub_caps
+
+		cmp al, 'a'
+		jb print_int09
+		cmp al, 'z'
+		ja print_int09
 		
+		sub al, byte ptr sub_caps
+		
+	print_int09:
 		mov es:[ebx], al 	
 		add dword ptr syml_pos, 2 
 		jmp short exit_int09
@@ -447,38 +452,23 @@ print_mem:
     count_memory endp
 
 
-
     print_eax proc ;uses ecx ebx edx
 		push ecx
 		push ebx
 		push edx
 		
-		; почему именно 8?
-		; сдвигаем ebx на 8 позиций (будем печатать 8 символов) и устанавливаем счетчик
-        add ebx, 10h
-        mov ecx, 8
-        mov dh, param
-
-        print_symbol:
-			; Получаем "младшую часть dl"
-			; AND с 0000 1111 --> остаются последние 4 бита, то есть 16ричная цифра
-            mov dl, al
-            and dl, 0Fh
-			
-			; Если dl меньше 10, то выводим просто эту цифру.
-            cmp dl, 10
-            jl print_hex_digit
-            add dl, 'A' - 10 - '0'
-
-        print_hex_digit:
-            add dl, '0' 
-            mov es:[ebx], dx 
-			; Циклически сдвигаем вправо число на 4, 
-            ; Тем самым на след. операции будем работать со след. цифрой.
-            ror eax, 4       
-			; переходим к левой ячейки видеопамяти  	
-            sub ebx, 2       
-        loop print_symbol
+		add ebx, 4
+		mov ecx, 10
+		
+	print_time:
+		xor edx, edx
+		div ecx
+		add edx, '0'
+		mov dh, param
+		mov es:[ebx], dx
+		sub bx, 2
+		cmp eax, 0
+		jnz print_time
 		
 		pop edx 
 		pop ebx

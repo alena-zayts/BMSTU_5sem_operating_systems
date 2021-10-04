@@ -86,10 +86,11 @@ data32 segment para 'data'
     mask_master db 0        
     mask_slave  db 0        
 
-    asciimap   db 0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 45, 61, 0, 0
-    db 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 91, 93, 0, 0, 65, 83
-    db 68, 70, 71, 72, 74, 75, 76, 59, 39, 96, 0, 92, 90, 88, 67
-    db 86, 66, 78, 77, 44, 46, 47
+	asciimap db	0,1Bh,'1','2','3','4','5','6','7','8','9','0','-','=',8
+							 db ' ','q','w','e','r','t','y','u','i','o','p','[',']','$'
+							 db ' ','a','s','d','f','g','h','j','k','l',';','""',0
+							 db '\','z','x','c','v','b','n','m',',','.','/',0,0,0,' ',0,0
+							 db 0,0,0,0,0,0,0,0,0,0,0,0
 
     enter_pressed_f db 0	
 
@@ -107,11 +108,13 @@ data32 segment para 'data'
     mem_msg_pos=80*2			
 	mem_msg db 'Memory: '
     mem_value_pos=80*2+7*2	
-    mb_pos=80*2+17*2	
+    mb_pos=80*2+11*2	
 	
 	rm_msg_1 db 'Start in real mode', 13, 10, '$'
 	rm_msg_wait db 'Press any key to enter protected mode...', 13, 10, '$'
 	rm_msg_2 db 'Back in real mode', 13, 10, '$'
+	
+	sub_caps db 0h
 
     data_size = $-gdt_null 
 data32 ends
@@ -184,51 +187,78 @@ print_mem:
     new_int08 endp
 	
 	
-    new_int09 proc 
-		push eax
+    new_int09 proc
+		push eax 
 		push ebx
-		push edx
+		push es
+		push ds
+
+		in	al, 60h 			; чтение скан-кода нажатой клавиши из порта клавиатуры
+		cmp	al, 1Ch 			; нажат Enter?
+		je enter_pressed 	
 		
-		;Порт 60h при чтении содержит скан-код последней нажатой клавиши
-        in  al, 60h
-		;сравнение с кодом Enter
-        cmp al, 1Ch 
-
-        jne print_value         
-        or enter_pressed_f, 1		
-        jmp allow_handle_keyboard
-
-    print_value:
-		;переход, если скан-код сообщает об отпускании клавиши, а не о нажатии
-        cmp al, 80h  
-        ja allow_handle_keyboard     
-
-        xor ah, ah   
-        xor ebx, ebx
-        mov bx, ax
-
-        mov dh, param
-        mov dl, asciimap[ebx]   
-        mov ebx, int09_pos   
-        mov es:[ebx], dx
-
-        add ebx, 2          
-        mov int09_pos, ebx
-
-    allow_handle_keyboard:
-		;старший бит порта 61h: 1-клавиатура  заблокирована, 0 - разблокирована.
-		in  al, 61h 
-        or  al, 80h 
-        out 61h, al 
-
-        mov al, 20h 
-        out 20h, al
+	check_caps_on:
+		cmp	al, 03Ah 			; нажат Caps (вкл)?
+		jne check_caps_off
+		mov bl, 32
+		mov byte ptr sub_caps, bl
 		
-		pop edx
+	check_caps_off:
+		cmp	al, 0BAh 			; нажат Caps (выкл=вкл+80h)?
+		jne translate_int09
+		mov bl, 0
+		mov byte ptr sub_caps, bl
+	
+
+	translate_int09:
+		cmp al, 39h 			; скан-код обслуживаемой клавиши?
+		ja exit_int09 	
+		
+		mov ebx, offset asciimap 
+		xlatb 					; преобразовать в ASCII
+		
+		mov ebx, int09_pos 	
+		cmp al, 8 				; нажат Backspace?
+		je bs_pressed
+		
+
+		cmp al, 'a'
+		jb print_int09
+		cmp al, 'z'
+		ja print_int09
+		
+		sub al, byte ptr sub_caps
+		
+	print_int09:
+		mov es:[ebx], al 	
+		add dword ptr int09_pos, 2 
+		jmp short exit_int09
+		
+	bs_pressed: 			; нажат Backspace: нарисовать пробел в позиции предыдущего символа
+		mov al, ' ' 			
+		sub ebx, 2 		
+		mov es:[ebx], al 
+		mov int09_pos, ebx 	
+		jmp short exit_int09
+	
+	enter_pressed:
+		or enter_pressed_f, 1			
+		
+	exit_int09:
+		; Разрешить работу клавиатуры
+		in	al, 61h
+		or	al, 80h
+		out	61h, al
+		
+		mov	al, 20h
+		out	20h, al
+
+		pop ds
+		pop es
 		pop ebx
-		pop eax
-        iretd
-    new_int09 endp
+		pop	eax
+		iretd
+	new_int09 endp
 	
 
     except_13 proc 
@@ -298,30 +328,23 @@ print_mem:
 		push ebx
 		push edx
 		
-        add ebx, 10h
-        mov ecx, 8
-        mov dh, param
-
-        print_symbol:
-            mov dl, al
-            and dl, 0Fh
-			
-            cmp dl, 10
-            jl print_hex_digit
-            add dl, 'A' - 10 - '0'
-
-        print_hex_digit:
-            add dl, '0' 
-            mov es:[ebx], dx 
-			
-            ror eax, 4       	
-            sub ebx, 2  
-			
-        loop print_symbol
+		add ebx, 4
+		mov ecx, 10
+		
+	print_time:
+		xor edx, edx
+		div ecx
+		add edx, '0'
+		mov dh, param
+		mov es:[ebx], dx
+		sub bx, 2
+		cmp eax, 0
+		jnz print_time
 		
 		pop edx 
 		pop ebx
 		pop ecx
+		
         ret
     print_mem_value endp
 
