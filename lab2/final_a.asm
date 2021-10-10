@@ -29,10 +29,10 @@ data32 segment para 'data'
 	;дескриптор сегмента: <limit, base_l, base_m, attr_1, attr_2, base_h>	
 	
 	;attr_1=98h=10011000b: подчиненный сегмент кода, разрешено только исполнение, является сегментом памяти
-	;					   0 уровень привелегий, присутсвует в памяти,
+	;					   0 уровень привелегий, присутсвует в памяти
 
 	;attr_1=92h=10010010b: сегмент данных (стека), разрешены чтение и запись, является сегментом памяти
-	;					   0 уровень привелегий, присутсвует в памяти,	
+	;					   0 уровень привелегий, присутсвует в памяти	
 	
 	;нулевой дескриптор
     gdt_null  descr <>
@@ -69,13 +69,13 @@ data32 segment para 'data'
 	
 	;дескриптор (шлюз) прерывания: <offs_l, sel, rsrv, attr, offs_h>
 	
-	;attr=8Fh: тип-шлюз ловушки 386/486, системный объект, 0 уровень привелегий, P=1
+	;attr=8Fh: тип-шлюз ловушки (Trap Gate) 80386+, системный объект, 0 уровень привелегий, P=1
     idescr_0_12 idescr 13 dup (<0,code32s,0,8Fh,0>)
 	; исключение 13 - нарушение общей защиты 
     idescr_13 idescr <0,code32s,0,8Fh,0>
     idescr_14_31 idescr 18 dup (<0,code32s,0,8Fh,0>)
 	
-	;attr=8Eh: тип-шлюз прерывания 386/486, системный объект, 0 уровень привелегий, P=1
+	;attr=8Eh: тип-шлюз прерываний (Interrupt Gate) 80386+, системный объект, 0 уровень привелегий, P=1
     int08 idescr <0,code32s,0,8Eh,0> 
     int09 idescr <0,code32s,0,8Eh,0>
 
@@ -193,7 +193,7 @@ print_mem:
 		push es
 		push ds
 
-		in	al, 60h 			; чтение скан-кода нажатой клавиши из порта клавиатуры
+		in	al, 60h 			
 		cmp	al, 1Ch 			; нажат Enter?
 		je enter_pressed 	
 		
@@ -204,7 +204,7 @@ print_mem:
 		mov byte ptr sub_caps, bl
 		
 	check_caps_off:
-		cmp	al, 0BAh 			; нажат Caps (выкл=вкл+80h)?
+		cmp	al, 0BAh 			; отпущен Caps (выкл=вкл+80h)?
 		jne translate_int09
 		mov bl, 0
 		mov byte ptr sub_caps, bl
@@ -215,7 +215,7 @@ print_mem:
 		ja exit_int09 	
 		
 		mov ebx, offset asciimap 
-		xlatb 					; преобразовать в ASCII
+		xlatb 					
 		
 		mov ebx, int09_pos 	
 		cmp al, 8 				; нажат Backspace?
@@ -234,7 +234,7 @@ print_mem:
 		add dword ptr int09_pos, 2 
 		jmp short exit_int09
 		
-	bs_pressed: 			; нажат Backspace: нарисовать пробел в позиции предыдущего символа
+	bs_pressed: 			
 		mov al, ' ' 			
 		sub ebx, 2 		
 		mov es:[ebx], al 
@@ -430,15 +430,12 @@ start:
     mov int09.offs_h, ax 
 
 
-
-    mov ax, data32
-    shl eax, 4
-    add eax, offset idt	
-    mov  dword ptr ipdescr + 2, eax 
+	add ebp, offset idt	
+    mov  dword ptr ipdescr + 2, ebp 
     mov  word ptr  ipdescr, idt_size-1 
 
 
-    ;сохранение значений масок прерываний для восстановления при возвращении в реальный режим
+    ;сохранение значений масок для восстановления при возвращении в реальный режим
     in  al, 21h                     
     mov mask_master, al             
     in  al, 0A1h                    
