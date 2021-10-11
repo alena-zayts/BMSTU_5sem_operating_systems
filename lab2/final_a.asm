@@ -41,7 +41,7 @@ data32 segment para 'data'
     gdt_code16 descr <code16_size-1,0,0,98h,0,0>
 	
 	;32-разрядный (D=1) сегмент данных, граница в блоках по 4 Кбайт (G=1), размер: 4 Гб
-    gdt_data4gb descr <0FFFFh,0,0,92h,0CFh,0>
+    gdt_data4gb descr <0FFFFh,0,0,92h,0CFh,0> 		;attr_1=92h=10010010b:
 	
 	;32-разрядный (D=1) сегмент кода, граница в байтах (G=0)
     gdt_code32 descr <code32_size-1,0,0,98h,40h,0>
@@ -134,6 +134,8 @@ pm_start:
     mov esp, eax
 
     sti 
+	xor al, al
+	out 70h, al
 	
 	mov ecx, 54                   
 	mov ah, param                 
@@ -163,6 +165,9 @@ print_mem:
         jz  proccess
 
     cli
+	mov al, 80h
+	out 70h, al
+
 
     db  0EAh
     dd  offset return_rm
@@ -327,7 +332,7 @@ print_mem:
 		push ecx
 		push ebx
 		push edx
-		
+		add eax, 1
 		add ebx, 4
 		mov ecx, 10
 		
@@ -434,7 +439,10 @@ start:
     mov  dword ptr ipdescr + 2, ebp 
     mov  word ptr  ipdescr, idt_size-1 
 
-
+    cli
+	mov al, 80h
+	out 70h, al
+	
     ;сохранение значений масок для восстановления при возвращении в реальный режим
     in  al, 21h                     
     mov mask_master, al             
@@ -462,11 +470,10 @@ start:
     lidt fword ptr ipdescr                                    
 
     ; открытие линии А20 
-	in  al, 92h
-    or  al, 2
-    out 92h, al
-	 
-    cli
+	mov al, 0D1h	
+	out 64h, al
+	mov al, 0DFh	
+	out 60h, al
 
     mov eax, cr0
     or eax, 1     
@@ -516,11 +523,17 @@ go:
     lidt    fword ptr ipdescr16
 
     ;закрытие линии A20
-    in  al, 70h 
-    and al, 7Fh
-    out 70h, al
+	mov al, 0D1h	
+	out 64h, al
+	mov al, 0DDh	
+	out 60h, al
+
+
 	
 	sti
+	xor al, al
+	out 70h, al
+
 
     mov ax, 3
     int 10h
