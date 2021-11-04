@@ -1,5 +1,9 @@
 интструкция к 1 лабе: https://github.com/Winterpuma/bmstu_OS/tree/master/5_semester/lab_01
 
+
+C:\Users\alena\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs\home\alena
+
+
 # Операционные системы
 
 1. 
