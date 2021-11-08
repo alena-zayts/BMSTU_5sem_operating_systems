@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (MiKTeX 21.6) (preloaded format=pdflatex 2021.9.4)  4 NOV 2021 20:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (MiKTeX 21.6) (preloaded format=pdflatex 2021.9.4)  8 NOV 2021 14:29
 entering extended mode
 **./report.tex
 (report.tex
@@ -947,6 +947,12 @@ LaTeX Warning: Label `some-code' multiply defined.
 
 LaTeX Warning: Label `some-code' multiply defined.
 
+
+LaTeX Warning: Label `some-code' multiply defined.
+
+
+LaTeX Warning: Label `fig:task05_01' multiply defined.
+
 )
 \openout1 = `report.aux'.
 
@@ -1163,47 +1169,54 @@ File: img/task02.png Graphic file (type png)
 Package pdftex.def Info: img/task02.png  used on input line 256.
 (pdftex.def)             Requested size: 500.484pt x 147.87836pt.
  [4 <./img/task02.png>] [5]
-<img/task03.png, id=36, 403.93768pt x 135.50626pt>
+<img/task03.png, id=36, 403.93768pt x 147.55125pt>
 File: img/task03.png Graphic file (type png)
 <use img/task03.png>
-Package pdftex.def Info: img/task03.png  used on input line 348.
-(pdftex.def)             Requested size: 500.484pt x 167.90607pt.
- [6 <./img/task03.png>] [7]
-<img/task04.png, id=45, 402.64714pt x 196.16142pt>
+Package pdftex.def Info: img/task03.png  used on input line 373.
+(pdftex.def)             Requested size: 500.484pt x 182.83105pt.
+ [6] [7 <./img/task03.png>] [8]
+<img/task04.png, id=48, 402.64714pt x 194.01053pt>
 File: img/task04.png Graphic file (type png)
 <use img/task04.png>
-Package pdftex.def Info: img/task04.png  used on input line 466.
-(pdftex.def)             Requested size: 500.484pt x 243.83627pt.
- [8] [9 <./img/task04.png>] [10] [11]
-<img/task05.png, id=59, 407.80928pt x 303.2759pt>
-File: img/task05.png Graphic file (type png)
-<use img/task05.png>
-Package pdftex.def Info: img/task05.png  used on input line 616.
-(pdftex.def)             Requested size: 500.484pt x 372.2173pt.
- (report.bbl) [12 <./img/task05.png>] (report.aux)
+Package pdftex.def Info: img/task04.png  used on input line 495.
+(pdftex.def)             Requested size: 500.484pt x 241.16261pt.
+ [9] [10 <./img/task04.png>] [11] [12]
+<img/task05_01.png, id=64, 407.80928pt x 200.03304pt>
+File: img/task05_01.png Graphic file (type png)
+<use img/task05_01.png>
+Package pdftex.def Info: img/task05_01.png  used on input line 649.
+(pdftex.def)             Requested size: 500.484pt x 245.505pt.
+<img/task05_02.png, id=65, 405.65839pt x 170.7809pt>
+File: img/task05_02.png Graphic file (type png)
+<use img/task05_02.png>
+Package pdftex.def Info: img/task05_02.png  used on input line 661.
+(pdftex.def)             Requested size: 500.484pt x 210.7003pt.
+ [13 <./img/task05_01.png>] (report.bbl) [14 <./img/task05_02.png>] (report.aux
+)
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 29850 strings out of 478864
- 733339 string characters out of 2858518
- 1676668 words of memory out of 10000000
- 47274 multiletter control sequences out of 15000+600000
- 415733 words of font info for 55 fonts, out of 8000000 for 9000
+ 29868 strings out of 478864
+ 733610 string characters out of 2858518
+ 1668833 words of memory out of 10000000
+ 47290 multiletter control sequences out of 15000+600000
+ 416615 words of font info for 56 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 99i,6n,103p,730b,1781s stack positions out of 5000i,500n,10000p,200000b,80000s
- <C:\Users\alena\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcss
-1095.pk> <C:\Users\alena\AppData\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi600\
-lass1095.pk> <C:\Users\alena\AppData\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi
-600\lasx1095.pk> <C:\Users\alena\AppData\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a
-/dpi600\larm0600.pk> <C:\Users\alena\AppData\Local\MiKTeX\fonts/pk/ljfour/lh/lh
--t2a/dpi600\labx1728.pk> <C:\Users\alena\AppData\Local\MiKTeX\fonts/pk/ljfour/l
-h/lh-t2a/dpi600\larm1200.pk> <C:\Users\alena\AppData\Local\MiKTeX\fonts/pk/ljfo
-ur/lh/lh-t2a/dpi600\labx1200.pk>
-Output written on report.pdf (13 pages, 265923 bytes).
+ 99i,6n,103p,822b,1781s stack positions out of 5000i,500n,10000p,200000b,80000s
+ <C:\Users\alena\AppData\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi600\lasi10
+95.pk> <C:\Users\alena\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
+tcss1095.pk> <C:\Users\alena\AppData\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi
+600\lass1095.pk> <C:\Users\alena\AppData\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a
+/dpi600\lasx1095.pk> <C:\Users\alena\AppData\Local\MiKTeX\fonts/pk/ljfour/lh/lh
+-t2a/dpi600\larm0600.pk> <C:\Users\alena\AppData\Local\MiKTeX\fonts/pk/ljfour/l
+h/lh-t2a/dpi600\labx1728.pk> <C:\Users\alena\AppData\Local\MiKTeX\fonts/pk/ljfo
+ur/lh/lh-t2a/dpi600\larm1200.pk> <C:\Users\alena\AppData\Local\MiKTeX\fonts/pk/
+ljfour/lh/lh-t2a/dpi600\labx1200.pk>
+Output written on report.pdf (15 pages, 291844 bytes).
 PDF statistics:
- 343 PDF objects out of 1000 (max. 8388607)
+ 374 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 43 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 48 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -13,9 +13,12 @@
 
 #define INTERVAL 1
 #define N_CHILDS 2
-#define MSG1 "This is message from 1 child\n"
-#define MSG2 "This is message from 2 child\n"
-#define LEN12 30
+
+#define MSG1 "ABCDEFG\n"
+#define LEN1 9
+#define MSG2 "ZXY\n"
+#define LEN2 5
+#define LENMAX 9
 
 int main()
 {
@@ -81,19 +84,20 @@ int main()
 		printf("Child process was stopped by a signal %d\n", WSTOPSIG(ch_status));
 	}
 	
-	char message[LEN12] = { 0 };
+	char message[LENMAX] = { 0 };
 	
 	printf("Reading messages from children.\n");
 	close(fd[1]);
 	
-	for (int i = 0; i < N_CHILDS; i++)
-	{
-		
-		if (read(fd[0], message, LEN12) < 0)
-			printf("No messages from child %d.\n", i+1);
-		else
-			printf("Message from child %d:\n%s", i+1, message);
-	}
+	if (read(fd[0], message, LEN1) < 0)
+		printf("No messages from first child.\n");
+	else
+		printf("Message from first child:\n%s", message);
+	
+	if (read(fd[0], message, LEN2) < 0)
+		printf("No messages from second child.\n");
+	else
+		printf("Message from second child:\n%s", message);
  
 	printf("Parent process is dead now\n");
 	return RET_OK;

@@ -12,34 +12,29 @@
 #define FORK_OK 0
 #define FORK_ERR -1
 
-#define BIG_INTERVAL 1000
-#define SMALL_INTERVAL 800
+#define INTERVAL 1
 #define N_CHILDS 2
-#define MSG1 "This is message from 1 child\n"
-#define MSG2 "This is message from 2 child\n"
-#define LEN12 30
 
-void child1_exit(int sig_numb) 
+#define MSG1 "ABCDEFG\n"
+#define LEN1 9
+#define MSG2 "ZXY\n"
+#define LEN2 5
+#define LENMAX 9
+
+short flag_writing_allowed = 0;
+
+void allow_writing(int signal)
 {
-    printf("First child exits\n");
-    exit(RET_OK);
+	flag_writing_allowed = 1;
 }
-
-void child2_exit(int sig_numb) 
-{
-    printf("Second child exits\n");
-    exit(RET_OK);
-}
-
 
 int main()
 {
 	pid_t childpid1, childpid2, childpid;
 	int fd[2];
 	
-	// назначение обработчиков сигнала
-    signal(SIGUSR1, child1_exit);
-	signal(SIGUSR2, child2_exit);
+	// назначение обработчика сигнала
+    signal(SIGUSR1, allow_writing);
 	
 	if (pipe(fd) == -1)
 	{
@@ -55,18 +50,22 @@ int main()
 	}
 	else if (childpid1 == FORK_OK)
 	{
+		sleep(INTERVAL);
 		printf("First child process: pid = %d, ppid = %d, pgrp = %d\n", 
 		getpid(), getppid(), getpgrp());
 		
-		close(fd[0]);
-		write(fd[1], MSG1, strlen(MSG1) + 1);
-		printf("Message from first child was sent\n"); 
-		
-		while (1)
+		if (flag_writing_allowed)
 		{
-			printf("First child in infinite loop\n"); 
-			usleep(SMALL_INTERVAL);
+			close(fd[0]);
+			write(fd[1], MSG1, strlen(MSG1) + 1);
+			printf("Message from first child was sent\n"); 
 		}
+		else
+		{
+			printf("Writing to pipe for first child is not allowed\n");
+		}
+		
+		exit(RET_OK);
 	}
 	
 	if ((childpid2 = fork()) == FORK_ERR)
@@ -76,30 +75,33 @@ int main()
 	}
 	else if (childpid2 == FORK_OK)
 	{
+		sleep(INTERVAL);
 		printf("Second child process: pid = %d, ppid = %d, pgrp = %d\n", 
 		getpid(), getppid(), getpgrp());
 		
-		close(fd[0]);
-		write(fd[1], MSG2, strlen(MSG2) + 1);
-		printf("Message from second child was sent\n"); 
-		
-		while (1)
+		if (flag_writing_allowed)
 		{
-			printf("Second child in infinite loop\n"); 
-			usleep(SMALL_INTERVAL);
+			close(fd[0]);
+			write(fd[1], MSG2, strlen(MSG2) + 1);
+			printf("Message from second child was sent\n"); 
 		}
+		else
+		{
+			printf("Writing to pipe for second child is not allowed\n");
+		}
+		
+		exit(RET_OK);
 	}
 	
-	usleep(BIG_INTERVAL);
 	printf("Parent process: pid = %d, pgrp = %d, childpid1 = %d, childpid2 = %d\n", 
 	getpid(), getpgrp(), childpid1, childpid2);
 	
-	usleep(BIG_INTERVAL);
+	// отправка сигналов
+	//kill(childpid1, SIGUSR1);
+	//kill(childpid2, SIGUSR1);
 	
-	printf("Parent sends signals to stop\n"); 
-	kill(childpid1, SIGUSR1);
-	kill(childpid2, SIGUSR2);
-
+	sleep(INTERVAL);
+	
 	int ch_status;
 	for (int i = 0; i < N_CHILDS; i++)
 	{
@@ -114,19 +116,20 @@ int main()
 		printf("Child process was stopped by a signal %d\n", WSTOPSIG(ch_status));
 	}
 	
-	char message[LEN12] = { 0 };
+	char message[LENMAX] = { 0 };
 	
-	printf("\nReading messages from children.\n");
+	printf("Reading messages from children.\n");
 	close(fd[1]);
 	
-	for (int i = 0; i < N_CHILDS; i++)
-	{
-		
-		if (read(fd[0], message, LEN12) < 0)
-			printf("No messages from child %d.\n", i+1);
-		else
-			printf("Message from child %d:\n%s", i+1, message);
-	}
+	if (read(fd[0], message, LEN1) < 0)
+		printf("No messages from first child.\n");
+	else
+		printf("Message from first child:\n%s", message);
+	
+	if (read(fd[0], message, LEN2) < 0)
+		printf("No messages from second child.\n");
+	else
+		printf("Message from second child:\n%s", message);
  
 	printf("Parent process is dead now\n");
 	return RET_OK;

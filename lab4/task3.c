@@ -24,9 +24,9 @@ int main()
 	{
 		printf("First child process: pid = %d, ppid = %d, pgrp = %d\n", 
 				getpid(), getppid(), getpgrp());
-		if (execlp("echo" , "echo" , "This is echo command from first child", NULL) < 0)
+		if (execl("./task3_sum", "task3_sum" , "2", "3", NULL) < 0)
 		{
-			perror("Can't execlp from first child.\n");
+			perror("Can't execl from first child.\n");
 			exit(RET_CANT_EXECLP);
 		}
 		exit(RET_OK);

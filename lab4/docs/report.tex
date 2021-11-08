@@ -103,8 +103,8 @@ escapeinside={\#*}{*)}   % если нужно добавить коммента
 
 \section*{Задание №1}
 
+Процессы-сироты. В программе создаются не менее двух потомков. В потомках вызывается sleep(). Чтобы предок гарантированно завершился раньше своих потомков. Продемонстрировать с помощью соответствующего вывода информацию об идентификаторах процессов и их группе. Продемонстрировать «усыновление». Для этого надо в потомках вывести идентификаторы: собственный, предка, группы до блокировки и после блокировки.
 
-Процессы-сироты. В программе создаются не менее двух потомков. В потомках вызывается sleep(). Чтобы предок гарантированно завершился раньше своих помков. Продемонстрировать с помощью соответствующего вывода информацию об идентификаторах процессов и их группе.
 
 \begin{lstlisting}[label=some-code,caption=Код программы к заданию №1,language=C]
 #include <stdio.h>
@@ -181,7 +181,7 @@ int main()
 
 \section*{Задание №2}
 
-Предок ждет завершения своих потомком, используя системный вызов wait(). Вывод соответствующих сообщений на экран.
+Предок ждет завершения своих потомком, используя системный вызов wait(). Вывод соответствующих сообщений на экран. В программе необходимо, чтобы предок выполнял анализ кодов завершения потомков.
 
 \begin{lstlisting}[label=some-code,caption=Код программы к заданию №2,language=C]
 #include <stdio.h>
@@ -262,8 +262,7 @@ int main()
 
 \section*{Задание №3}
 
-Потомки переходят на выполнение других программ. Предок ждет завершения своих потомков. Вывод соответствующих сообщений на экран.
-
+Потомки переходят на выполнение других программ, которые передаются системному вызову exec() в качестве параметра. Потомки должны выполнять разные программы. Предок ждет завершения своих потомков с анализом кодов завершения. На экран выводятся соответствующие сообщения.
 
 \begin{lstlisting}[label=some-code,caption=Код программы к заданию №3,language=C]
 #include <stdio.h>
@@ -292,9 +291,9 @@ int main()
 	{
 		printf("First child process: pid = %d, ppid = %d, pgrp = %d\n", 
 		getpid(), getppid(), getpgrp());
-		if (execlp("echo" , "echo" , "This is echo command from first child", NULL) < 0)
+		if (execl("./task3_sum", "task3_sum" , "2", "3", NULL) < 0)
 		{
-			perror("Can't execlp from first child.\n");
+			perror("Can't execl from first child.\n");
 			exit(RET_CANT_EXECLP);
 		}
 		exit(RET_OK);
@@ -341,6 +340,32 @@ int main()
 }
 \end{lstlisting}
 
+\begin{lstlisting}[label=some-code,caption=Код вызываемой из первого потомка программы,language=C]
+#include <stdio.h>
+#include <stdlib.h>
+
+#define RET_OK 0
+#define RET_ERR_PARAM -1
+
+int main(int argc, char **argv)
+{
+	int a, b;
+	
+	printf("This is program called from first child\n");
+	
+	if ((argc != 3) || 
+	((a = atoi(argv[1])) <= 0) || 
+	((b = atoi(argv[2])) <= 0))
+	{
+		printf("Error: got wrong arguments\n");
+		return RET_ERR_PARAM;
+	}
+	
+	printf("I can count sum: %d + %d = %d\n", a, b, (a + b));
+	return RET_OK;
+}
+\end{lstlisting}
+
 \begin{figure}[H]
 
 	\centering
@@ -354,7 +379,7 @@ int main()
 
 \section*{Задание №4}
 
-Предок и потомки обмениваются сообщениями через неименованный программный канал. Предок ждет завершения своих потомков. Вывод соответствующих сообщений на экран.
+Предок и потомки обмениваются сообщениями через неименованный программный канал. Причем оба потомка пишут свои сообщения в один программный канал, а предок их считывает из канала. Потомки должны посылать предку разные сообщения по содержанию и размеру. Предок считывает сообщения от потомков и выводит их на экран. Предок ждет завершения своих потомков и анализирует код их завершения. Вывод соответствующих сообщений на экран.
 
 \begin{lstlisting}[label=some-code,caption=Код программы к заданию №4,language=C]
 #include <stdio.h>
@@ -372,9 +397,12 @@ int main()
 
 #define INTERVAL 1
 #define N_CHILDS 2
-#define MSG1 "This is message from 1 child\n"
-#define MSG2 "This is message from 2 child\n"
-#define LEN12 30
+
+#define MSG1 "ABCDEFG\n"
+#define LEN1 9
+#define MSG2 "ZXY\n"
+#define LEN2 5
+#define LENMAX 9
 
 int main()
 {
@@ -440,19 +468,20 @@ int main()
 		printf("Child process was stopped by a signal %d\n", WSTOPSIG(ch_status));
 	}
 	
-	char message[LEN12] = { 0 };
+	char message[LENMAX] = { 0 };
 	
 	printf("Reading messages from children.\n");
 	close(fd[1]);
 	
-	for (int i = 0; i < N_CHILDS; i++)
-	{
-		
-		if (read(fd[0], message, LEN12) < 0)
-		printf("No messages from child %d.\n", i+1);
-		else
-		printf("Message from child %d:\n%s", i+1, message);
-	}
+	if (read(fd[0], message, LEN1) < 0)
+	printf("No messages from first child.\n");
+	else
+	printf("Message from first child:\n%s", message);
+	
+	if (read(fd[0], message, LEN2) < 0)
+	printf("No messages from second child.\n");
+	else
+	printf("Message from second child:\n%s", message);
 	
 	printf("Parent process is dead now\n");
 	return RET_OK;
@@ -472,7 +501,7 @@ int main()
 
 \section*{Задание №5}
 
-Предок и потомки обмениваются сообщениями через неименованный программный канал. С помощью сигнала меняется ход выполнения программы. Предок ждет завершения своих потомков. Вывод соответствующих сообщений на экран.
+Предок и потомки аналогично п.4 обмениваются сообщениями через неименованный программный канал. В программу включается собственный обработчик сигнала. С помощью сигнала меняется ход выполнения программы. При получении сигнала потомки записывают сообщения в канал, если сигнал не поступает, то не записывают. Предок ждет завершения своих потомков и анализирует коды их завершений. Вывод соответствующих сообщений на экран.
 
 \begin{lstlisting}[label=some-code,caption=Код программы к заданию №5,language=C]
 #include <stdio.h>
@@ -489,33 +518,29 @@ int main()
 #define FORK_OK 0
 #define FORK_ERR -1
 
-#define BIG_INTERVAL 1000
-#define SMALL_INTERVAL 800
+#define INTERVAL 1
 #define N_CHILDS 2
-#define MSG1 "This is message from 1 child\n"
-#define MSG2 "This is message from 2 child\n"
-#define LEN12 30
 
-void child1_exit(int sig_numb) 
+#define MSG1 "ABCDEFG\n"
+#define LEN1 9
+#define MSG2 "ZXY\n"
+#define LEN2 5
+#define LENMAX 9
+
+short flag_writing_allowed = 0;
+
+void allow_writing(int signal)
 {
-	printf("First child exits\n");
-	exit(RET_OK);
+	flag_writing_allowed = 1;
 }
-
-void child2_exit(int sig_numb) 
-{
-	printf("Second child exits\n");
-	exit(RET_OK);
-}
-
 
 int main()
 {
 	pid_t childpid1, childpid2, childpid;
 	int fd[2];
 	
-	signal(SIGUSR1, child1_exit);
-	signal(SIGUSR2, child2_exit);
+	// signal handler assignment
+	signal(SIGUSR1, allow_writing);
 	
 	if (pipe(fd) == -1)
 	{
@@ -531,18 +556,22 @@ int main()
 	}
 	else if (childpid1 == FORK_OK)
 	{
+		sleep(INTERVAL);
 		printf("First child process: pid = %d, ppid = %d, pgrp = %d\n", 
 		getpid(), getppid(), getpgrp());
 		
-		close(fd[0]);
-		write(fd[1], MSG1, strlen(MSG1) + 1);
-		printf("Message from first child was sent\n"); 
-		
-		while (1)
+		if (flag_writing_allowed)
 		{
-			printf("First child in infinite loop\n"); 
-			usleep(SMALL_INTERVAL);
+			close(fd[0]);
+			write(fd[1], MSG1, strlen(MSG1) + 1);
+			printf("Message from first child was sent\n"); 
 		}
+		else
+		{
+			printf("Writing to pipe for first child is not allowed\n");
+		}
+		
+		exit(RET_OK);
 	}
 	
 	if ((childpid2 = fork()) == FORK_ERR)
@@ -552,29 +581,32 @@ int main()
 	}
 	else if (childpid2 == FORK_OK)
 	{
+		sleep(INTERVAL);
 		printf("Second child process: pid = %d, ppid = %d, pgrp = %d\n", 
 		getpid(), getppid(), getpgrp());
 		
-		close(fd[0]);
-		write(fd[1], MSG2, strlen(MSG2) + 1);
-		printf("Message from second child was sent\n"); 
-		
-		while (1)
+		if (flag_writing_allowed)
 		{
-			printf("Second child in infinite loop\n"); 
-			usleep(SMALL_INTERVAL);
+			close(fd[0]);
+			write(fd[1], MSG2, strlen(MSG2) + 1);
+			printf("Message from second child was sent\n"); 
 		}
+		else
+		{
+			printf("Writing to pipe for second child is not allowed\n");
+		}
+		
+		exit(RET_OK);
 	}
 	
-	usleep(BIG_INTERVAL);
 	printf("Parent process: pid = %d, pgrp = %d, childpid1 = %d, childpid2 = %d\n", 
 	getpid(), getpgrp(), childpid1, childpid2);
 	
-	usleep(BIG_INTERVAL);
-	
-	printf("Parent sends signals to stop\n"); 
+	// send signals
 	kill(childpid1, SIGUSR1);
-	kill(childpid2, SIGUSR2);
+	kill(childpid2, SIGUSR1);
+	
+	sleep(INTERVAL);
 	
 	int ch_status;
 	for (int i = 0; i < N_CHILDS; i++)
@@ -590,19 +622,20 @@ int main()
 		printf("Child process was stopped by a signal %d\n", WSTOPSIG(ch_status));
 	}
 	
-	char message[LEN12] = { 0 };
+	char message[LENMAX] = { 0 };
 	
-	printf("\nReading messages from children.\n");
+	printf("Reading messages from children.\n");
 	close(fd[1]);
 	
-	for (int i = 0; i < N_CHILDS; i++)
-	{
-		
-		if (read(fd[0], message, LEN12) < 0)
-		printf("No messages from child %d.\n", i+1);
-		else
-		printf("Message from child %d:\n%s", i+1, message);
-	}
+	if (read(fd[0], message, LEN1) < 0)
+	printf("No messages from first child.\n");
+	else
+	printf("Message from first child:\n%s", message);
+	
+	if (read(fd[0], message, LEN2) < 0)
+	printf("No messages from second child.\n");
+	else
+	printf("Message from second child:\n%s", message);
 	
 	printf("Parent process is dead now\n");
 	return RET_OK;
@@ -613,13 +646,24 @@ int main()
 
 	\centering
 
-	\includegraphics[width=\linewidth]{img/task05.png}
-	\caption{Демонстрация работы программы (задание №5).}
+	\includegraphics[width=\linewidth]{img/task05_01.png}
+	\caption{Демонстрация работы программы при отправке сигналов (задание №5).}
 
-	\label{fig:task05}
+	\label{fig:task05_01}
 
 \end{figure}
 
+
+\begin{figure}[H]
+	
+	\centering
+	
+	\includegraphics[width=\linewidth]{img/task05_02.png}
+	\caption{Демонстрация работы программы при отсутствии отправки сигналов (закомментированы строки 100 и 101).}
+	
+	\label{fig:task05_01}
+	
+\end{figure}
 
 
 \bibliographystyle{utf8gost705u}  % стилевой файл для оформления по ГОСТу
