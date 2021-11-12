@@ -306,9 +306,10 @@ int main()
 	}
 	else if (childpid2 == FORK_OK)
 	{
+		sleep(INTERVAL);
 		printf("Second child process: pid = %d, ppid = %d, pgrp = %d\n", 
 		getpid(), getppid(), getpgrp());
-		if (execlp("cat", "cat", "for_cat.txt", NULL) < 0)
+		if (execlp("./task3_write", "task3_write" , "file_to_write.txt", "This is test info", NULL) < 0)
 		{
 			perror("Can't execlp from second child.\n");
 			exit(RET_CANT_EXECLP);
@@ -317,7 +318,7 @@ int main()
 		exit(RET_OK);
 	}
 	
-	sleep(INTERVAL);
+	sleep(INTERVAL * 2);
 	printf("Parent process: pid = %d, pgrp = %d, childpid1 = %d, childpid2 = %d\n", 
 	getpid(), getpgrp(), childpid1, childpid2);
 	
@@ -366,6 +367,50 @@ int main(int argc, char **argv)
 }
 \end{lstlisting}
 
+
+\begin{lstlisting}[label=some-code,caption=Код вызываемой из второго потомка программы,language=C]
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+#define RET_OK 0
+#define RET_ERR_PARAM -1
+#define RET_ERR_FILE -2
+
+int main(int argc, char **argv)
+{
+	printf("This is program called from second child\n");
+	
+	if (argc != 3)
+	{
+		printf("Error: got wrong arguments\n");
+		return RET_ERR_PARAM;
+	}
+	
+	FILE *f = fopen(argv[1], "w");
+	if (!f)
+	{
+		printf("Error: cant open file\n");
+		return RET_ERR_FILE;
+	}
+	
+	printf("I can write given info and info about myself here and to given file %s\n", argv[1]);
+	
+	fprintf(f, "Given info: %s\n", argv[2]);
+	fprintf(stdout, "Given info: %s\n", argv[2]);
+	
+	fprintf(f, "Info about myself: pid = %d, ppid = %d, pgrp = %d\n", 
+	getpid(), getppid(), getpgrp());
+	fprintf(stdout, "Info about myself: pid = %d, ppid = %d, pgrp = %d\n", 
+	getpid(), getppid(), getpgrp());
+	
+	fclose(f);
+	
+	return RET_OK;
+}
+\end{lstlisting}
+
+
 \begin{figure}[H]
 
 	\centering
@@ -376,6 +421,8 @@ int main(int argc, char **argv)
 	\label{fig:task03}
 
 \end{figure}
+
+
 
 \section*{Задание №4}
 
@@ -398,11 +445,11 @@ int main(int argc, char **argv)
 #define INTERVAL 1
 #define N_CHILDS 2
 
-#define MSG1 "ABCDEFG\n"
-#define LEN1 9
-#define MSG2 "ZXY\n"
-#define LEN2 5
-#define LENMAX 9
+#define MSG1 "London is the capital of Great Britain\n"
+#define LEN1 40
+#define MSG2 "ABRA-kadabra\n"
+#define LEN2 14
+#define LENMAX 40
 
 int main()
 {
@@ -468,7 +515,7 @@ int main()
 		printf("Child process was stopped by a signal %d\n", WSTOPSIG(ch_status));
 	}
 	
-	char message[LENMAX] = { 0 };
+	char message[LENMAX] = "\0";
 	
 	printf("Reading messages from children.\n");
 	close(fd[1]);
@@ -518,29 +565,31 @@ int main()
 #define FORK_OK 0
 #define FORK_ERR -1
 
-#define INTERVAL 1
+#define INTERVAL 2
 #define N_CHILDS 2
 
-#define MSG1 "ABCDEFG\n"
-#define LEN1 9
-#define MSG2 "ZXY\n"
-#define LEN2 5
-#define LENMAX 9
+#define MSG1 "London is the capital of Great Britain\n"
+#define LEN1 40
+#define MSG2 "ABRA-kadabra\n"
+#define LEN2 14
+#define LENMAX 40
 
 short flag_writing_allowed = 0;
 
 void allow_writing(int signal)
 {
 	flag_writing_allowed = 1;
-}
+	printf("\nSignal %d was caught. Writing is allowed now.\n", signal);
+} 
 
 int main()
 {
 	pid_t childpid1, childpid2, childpid;
 	int fd[2];
 	
-	// signal handler assignment
-	signal(SIGUSR1, allow_writing);
+	signal(SIGINT, allow_writing);
+	printf("Press \"CTRL+C\" to allow writing\n");
+	sleep(INTERVAL);
 	
 	if (pipe(fd) == -1)
 	{
@@ -602,10 +651,6 @@ int main()
 	printf("Parent process: pid = %d, pgrp = %d, childpid1 = %d, childpid2 = %d\n", 
 	getpid(), getpgrp(), childpid1, childpid2);
 	
-	// send signals
-	kill(childpid1, SIGUSR1);
-	kill(childpid2, SIGUSR1);
-	
 	sleep(INTERVAL);
 	
 	int ch_status;
@@ -647,7 +692,7 @@ int main()
 	\centering
 
 	\includegraphics[width=\linewidth]{img/task05_01.png}
-	\caption{Демонстрация работы программы при отправке сигналов (задание №5).}
+	\caption{Демонстрация работы программы при отправке сигнала (задание №5).}
 
 	\label{fig:task05_01}
 
@@ -659,7 +704,7 @@ int main()
 	\centering
 	
 	\includegraphics[width=\linewidth]{img/task05_02.png}
-	\caption{Демонстрация работы программы при отсутствии отправки сигналов (закомментированы строки 100 и 101).}
+	\caption{Демонстрация работы программы при отсутствии отправки сигнала.}
 	
 	\label{fig:task05_01}
 	

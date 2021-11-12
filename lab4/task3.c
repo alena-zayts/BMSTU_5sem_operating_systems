@@ -39,9 +39,10 @@ int main()
 	}
 	else if (childpid2 == FORK_OK)
 	{
+		sleep(INTERVAL);
 		printf("Second child process: pid = %d, ppid = %d, pgrp = %d\n", 
 					getpid(), getppid(), getpgrp());
-		if (execlp("cat", "cat", "for_cat.txt", NULL) < 0)
+		if (execlp("./task3_write", "task3_write" , "file_to_write.txt", "This is test info", NULL) < 0)
 		{
 			perror("Can't execlp from second child.\n");
 			exit(RET_CANT_EXECLP);
@@ -50,7 +51,7 @@ int main()
 		exit(RET_OK);
 	}
 
-	sleep(INTERVAL);
+	sleep(INTERVAL * 2);
 	printf("Parent process: pid = %d, pgrp = %d, childpid1 = %d, childpid2 = %d\n", 
 				getpid(), getpgrp(), childpid1, childpid2);
 				

@@ -12,21 +12,22 @@
 #define FORK_OK 0
 #define FORK_ERR -1
 
-#define INTERVAL 1
+#define INTERVAL 2
 #define N_CHILDS 2
 
-#define MSG1 "ABCDEFG\n"
-#define LEN1 9
-#define MSG2 "ZXY\n"
-#define LEN2 5
-#define LENMAX 9
+#define MSG1 "London is the capital of Great Britain\n"
+#define LEN1 40
+#define MSG2 "ABRA-kadabra\n"
+#define LEN2 14
+#define LENMAX 40
 
 short flag_writing_allowed = 0;
 
 void allow_writing(int signal)
 {
 	flag_writing_allowed = 1;
-}
+	printf("\nSignal %d was caught. Writing is allowed now.\n", signal);
+} 
 
 int main()
 {
@@ -34,7 +35,9 @@ int main()
 	int fd[2];
 	
 	// назначение обработчика сигнала
-    signal(SIGUSR1, allow_writing);
+    signal(SIGINT, allow_writing);
+	printf("Press \"CTRL+C\" to allow writing\n");
+	sleep(INTERVAL);
 	
 	if (pipe(fd) == -1)
 	{
@@ -95,10 +98,6 @@ int main()
 	
 	printf("Parent process: pid = %d, pgrp = %d, childpid1 = %d, childpid2 = %d\n", 
 	getpid(), getpgrp(), childpid1, childpid2);
-	
-	// отправка сигналов
-	//kill(childpid1, SIGUSR1);
-	//kill(childpid2, SIGUSR1);
 	
 	sleep(INTERVAL);
 	

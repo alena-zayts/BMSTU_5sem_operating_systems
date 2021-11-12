@@ -14,11 +14,11 @@
 #define INTERVAL 1
 #define N_CHILDS 2
 
-#define MSG1 "ABCDEFG\n"
-#define LEN1 9
-#define MSG2 "ZXY\n"
-#define LEN2 5
-#define LENMAX 9
+#define MSG1 "London is the capital of Great Britain\n"
+#define LEN1 40
+#define MSG2 "ABRA-kadabra\n"
+#define LEN2 14
+#define LENMAX 40
 
 int main()
 {
@@ -84,7 +84,7 @@ int main()
 		printf("Child process was stopped by a signal %d\n", WSTOPSIG(ch_status));
 	}
 	
-	char message[LENMAX] = { 0 };
+	char message[LENMAX] = "\0";
 	
 	printf("Reading messages from children.\n");
 	close(fd[1]);
