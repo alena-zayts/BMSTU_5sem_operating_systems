@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (MiKTeX 21.6) (preloaded format=pdflatex 2021.9.4)  15 NOV 2021 23:10
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (MiKTeX 21.6) (preloaded format=pdflatex 2021.9.4)  17 NOV 2021 00:40
 entering extended mode
 **./report.tex
 (report.tex
@@ -651,7 +651,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 15--19
  []
 
 
-Overfull \hbox (82.73425pt too wide) in paragraph at lines 25--32
+Overfull \hbox (27.75116pt too wide) in paragraph at lines 25--32
 \T2A/cmr/bx/n/12 Тема $[]$ 
  []
 
@@ -693,13 +693,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 25--32
 
 
 {C:/Users/alena/AppData/Local/MiKTeX/pdftex/config/pdftex.map} <./inc/img/b_log
-o.jpg>]) (report.toc
-Overfull \hbox (5.6292pt too wide) in paragraph at lines 9--9
- [][] []\T2A/cmr/m/n/14.4 Повышение при-о-ри-те-та по за-вер-ше-нии опе-ра-ции 
-ввода- 
- []
-
-)
+o.jpg>]) (report.toc)
 \tf@toc=\write3
 \openout3 = `report.toc'.
 
@@ -718,115 +712,144 @@ Overfull \hbox (4.48158pt too wide) in paragraph at lines 1--1
 |[]\T2A/cmr/bx/n/24.88 Функции об-ра-бот-чи-ка пре-ры-ва-ния от
  []
 
-LaTeX Font Info:    Trying to load font information for T2A+cmtt on input line 
-20.
-(C:\Users\alena\AppData\Roaming\MiKTeX\tex/latex/cyrillic\t2acmtt.fd
-File: t2acmtt.fd 2001/08/11 v1.0a Computer Modern Cyrillic font definitions
-) [2
+[2
 
 
 ]
+LaTeX Font Info:    Trying to load font information for T2A+cmtt on input line 
+41.
+ (C:\Users\alena\AppData\Roaming\MiKTeX\tex/latex/cyrillic\t2acmtt.fd
+File: t2acmtt.fd 2001/08/11 v1.0a Computer Modern Cyrillic font definitions
+)
 [3]
 {\cyrillictext \CYRG \cyrl \cyra \cyrv \cyra } 2.
 
-Overfull \hbox (0.23087pt too wide) in paragraph at lines 54--54
+Overfull \hbox (0.23087pt too wide) in paragraph at lines 56--56
 |[]\T2A/cmr/bx/n/24.88 Пересчјт ди-на-ми-че-ских при-о-ри-те-тов| 
  []
 
 [4
 
 ]
-Overfull \hbox (2.69041pt too wide) in paragraph at lines 98--98
-[]\T2A/cmr/bx/n/14.4 Приоритет
+Underfull \hbox (badness 10000) in paragraph at lines 117--117
+[]\T2A/cmr/bx/n/14.4 real-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 98--98
-\T2A/cmr/bx/n/14.4 4.3BSD
+Underfull \hbox (badness 10000) in paragraph at lines 117--117
+[]\T2A/cmr/bx/n/14.4 above
  []
 
 
-Overfull \hbox (2.69041pt too wide) in paragraph at lines 98--99
-[]\T2A/cmr/bx/n/14.4 Приоритет
+Overfull \hbox (3.65727pt too wide) in paragraph at lines 117--117
+\T2A/cmr/bx/n/14.4 normal| 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 98--99
-\T2A/cmr/bx/n/14.4 SCO
+Overfull \hbox (3.65727pt too wide) in paragraph at lines 117--117
+[]\T2A/cmr/bx/n/14.4 normal| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 117--117
+[]\T2A/cmr/bx/n/14.4 below
+ []
+
+
+Overfull \hbox (3.65727pt too wide) in paragraph at lines 117--117
+\T2A/cmr/bx/n/14.4 normal| 
  []
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[5] [6] [7] [8]
-Underfull \hbox (badness 10000) in paragraph at lines 201--201
-[]\T2A/cmr/bx/n/14.4 real-
+[5] [6]
+Overfull \hbox (1.53174pt too wide) in paragraph at lines 152--153
+\T2A/cmr/m/n/14.4 жек -- по-ток мо-жет вновь за-пу-стить-ся и на-чать но-вую оп
+е-ра-цию ввода-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 201--201
-[]\T2A/cmr/bx/n/14.4 above
+Overfull \hbox (0.39935pt too wide) in paragraph at lines 160--161
+[]\T2A/cmr/m/n/14.4 Повышение при-о-ри-те-та по-то-ков пер-во-го пла-на по-сле 
+ожи-да-ния (улуч-
  []
 
 
-Overfull \hbox (3.65727pt too wide) in paragraph at lines 201--201
-\T2A/cmr/bx/n/14.4 normal| 
+Overfull \hbox (36.29433pt too wide) in paragraph at lines 161--162
+[]\T2A/cmr/m/n/14.4 Повышение при-о-ри-те-та по-сле про-буж-де-ния GUI-потока (
+потоки-владельцы
+ []
+
+[7] [8]
+<inc/img/6.png, id=44, 795.97375pt x 329.23pt>
+File: inc/img/6.png Graphic file (type png)
+<use inc/img/6.png>
+Package pdftex.def Info: inc/img/6.png  used on input line 204.
+(pdftex.def)             Requested size: 481.53525pt x 199.16928pt.
+
+Overfull \hbox (12.06476pt too wide) in paragraph at lines 204--204
+ [] 
+ []
+
+[9 <./inc/img/6.png>] [10] [11]
+Overfull \hbox (2.69041pt too wide) in paragraph at lines 286--286
+[]\T2A/cmr/bx/n/14.4 Приоритет
  []
 
 
-Overfull \hbox (3.65727pt too wide) in paragraph at lines 201--201
-[]\T2A/cmr/bx/n/14.4 normal| 
+Underfull \hbox (badness 10000) in paragraph at lines 286--286
+\T2A/cmr/bx/n/14.4 4.3BSD
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 201--201
-[]\T2A/cmr/bx/n/14.4 below
+Overfull \hbox (2.69041pt too wide) in paragraph at lines 286--287
+[]\T2A/cmr/bx/n/14.4 Приоритет
  []
 
 
-Overfull \hbox (3.65727pt too wide) in paragraph at lines 201--201
-\T2A/cmr/bx/n/14.4 normal| 
+Underfull \hbox (badness 10000) in paragraph at lines 286--287
+\T2A/cmr/bx/n/14.4 SCO
  []
 
-[9]
-Overfull \hbox (16.2178pt too wide) in paragraph at lines 237--238
-[]\T2A/cmr/m/n/14.4 Повышение при-о-ри-те-та про-иг-ры-ва-ния муль-ти-ме-диа, у
-прав-ля-е-мое служ-
+
+Overfull \hbox (6.62547pt too wide) in paragraph at lines 310--311
+\T2A/cmr/m/n/14.4 ло-жен-ный вы-зов про-це-ду-ры \T2A/cmtt/m/n/14.4 schedcpu()\
+T2A/cmr/m/n/14.4 , ко-то-рая умень-ша-ет зна-че-ние \T2A/cmtt/m/n/14.4 p_cpu
  []
 
-[10]) [11
 
-]
+Overfull \hbox (4.60512pt too wide) in paragraph at lines 310--311
+\T2A/cmr/m/n/14.4 каж-до-го про-цес-са ис-хо-дя из фак-то-ра <<по-лу-рас-па-да>
+> (decay factor). В \T2A/cmtt/m/n/14.4 4.3BSD
+ []
 
-Package caption Warning: Unused \captionsetup[figure] on input line 9.
-See the caption package documentation for explanation.
+[12] [13]) [14
 
-(report.aux (00-title.aux) (lab.aux)) ) 
+] (report.aux (00-title.aux) (lab.aux)) ) 
 Here is how much of TeX's memory you used:
- 7430 strings out of 478864
- 112708 string characters out of 2858518
- 445409 words of memory out of 10000000
- 25193 multiletter control sequences out of 15000+600000
- 420189 words of font info for 60 fonts, out of 8000000 for 9000
+ 7435 strings out of 478864
+ 112770 string characters out of 2858518
+ 445419 words of memory out of 10000000
+ 25200 multiletter control sequences out of 15000+600000
+ 418564 words of font info for 58 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 64i,11n,71p,1188b,346s stack positions out of 5000i,500n,10000p,200000b,80000s
- <C:\Users\alena\AppData\Local\MiKTeX\fo
-nts/pk/ljfour/lh/lh-t2a/dpi600\labx1728.pk> <C:\Users\alena\AppData\Local\MiKTe
-X\fonts/pk/ljfour/lh/lh-t2a/dpi600\latt1440.pk> <C:\Users\alena\AppData\Local\M
-iKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1440.pk> <C:\Users\alena\AppData\L
-ocal\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi600\larm1440.pk> <C:\Users\alena\AppDa
-ta\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi600\labx1440.pk> <C:\Users\alena\A
-ppData\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi600\labx2488.pk> <C:\Users\ale
-na\AppData\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi600\labx2074.pk> <C:\Users
-\alena\AppData\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi600\larm1200.pk> <C:\U
-sers\alena\AppData\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi600\labx1200.pk><C
-:/Program Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Fi
-les/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program Files/MiKTeX/f
-onts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX/fonts/type1/pu
-blic/amsfonts/cm/cmsy10.pfb>
-Output written on report.pdf (12 pages, 236420 bytes).
+ 64i,11n,71p,1147b,353s stack positions out of 5000i,500n,10000p,200000b,80000s
+ <C:\Users\alena\AppData\Local\MiKTeX\
+fonts/pk/ljfour/lh/lh-t2a/dpi600\latt1440.pk> <C:\Users\alena\AppData\Local\MiK
+TeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1440.pk> <C:\Users\alena\AppData\Loc
+al\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi600\larm1440.pk> <C:\Users\alena\AppData
+\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi600\labx1440.pk> <C:\Users\alena\App
+Data\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi600\labx2488.pk> <C:\Users\alena
+\AppData\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi600\labx2074.pk> <C:\Users\a
+lena\AppData\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi600\larm1200.pk> <C:\Use
+rs\alena\AppData\Local\MiKTeX\fonts/pk/ljfour/lh/lh-t2a/dpi600\labx1200.pk><C:/
+Program Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program File
+s/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX/font
+s/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on report.pdf (15 pages, 284235 bytes).
 PDF statistics:
- 495 PDF objects out of 1000 (max. 8388607)
+ 507 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 26 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 31 words of extra memory for PDF output out of 10000 (max. 10000000)
 

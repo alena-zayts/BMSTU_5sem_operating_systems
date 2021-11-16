@@ -1,8 +1,7 @@
 \babel@toc {russian}{}
 \contentsline {chapter}{\numberline {1}Функции обработчика прерывания от системного таймера}{2}{}%
-\contentsline {section}{\numberline {1.1}Unix}{2}{}%
-\contentsline {section}{\numberline {1.2}Windows}{3}{}%
+\contentsline {section}{\numberline {1.1}Windows}{2}{}%
+\contentsline {section}{\numberline {1.2}Unix}{2}{}%
 \contentsline {chapter}{\numberline {2}Пересчёт динамических приоритетов}{4}{}%
-\contentsline {section}{\numberline {2.1}Unix}{4}{}%
-\contentsline {subsection}{\numberline {2.1.1}Приоритеты процессов}{4}{}%
-\contentsline {section}{\numberline {2.2}Windows-системы}{7}{}%
+\contentsline {section}{\numberline {2.1}Windows}{4}{}%
+\contentsline {section}{\numberline {2.2}Unix}{9}{}%
