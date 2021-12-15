@@ -13,8 +13,8 @@
 #define N_WRITERS 3
 
 #define ACTIVE_READERS 0
-#define CAN_WRITE 1
-#define CAN_READ 2
+#define ACTIVE_WRITERS 1	//CAN_WRITE
+#define WAITING_READERS 2 //CAN_READ
 #define WAITING_WRITERS 3
 
 #define MIN_SLEEP 1
@@ -23,9 +23,11 @@
 
 struct sembuf SEM_START_READ[] = 
 {
-	{WAITING_WRITERS, 0, 0},
-    {CAN_READ, 0, 0},
+    {ACTIVE_WRITERS, 0, 0},
+	{WAITING_READERS, 1, 0},
+    {WAITING_WRITERS, 0, 0},
     {ACTIVE_READERS, 1, 0},
+    {WAITING_READERS, -1, 0},
 };
 
 struct sembuf SEM_STOP_READ[] = 
@@ -37,16 +39,14 @@ struct sembuf SEM_START_WRITE[] =
 {
     {WAITING_WRITERS, 1, 0},
     {ACTIVE_READERS, 0, 0},
-    {CAN_WRITE, 0, 0},
-    {CAN_WRITE, 1, 0},
-	{CAN_READ, 1, 0},
+    {ACTIVE_WRITERS, 0, 0},
+    {ACTIVE_WRITERS, 1, 0},
     {WAITING_WRITERS, -1, 0},
 };
 
 struct sembuf SEM_STOP_WRITE[] = 
 {
-    {CAN_WRITE, -1, 0},
-	{CAN_READ, -1, 0},
+    {ACTIVE_WRITERS, -1, 0},
 };
 
 int start_read(int s_id)
@@ -168,9 +168,9 @@ int main()
     }
 	
 	if (semctl(s_id, ACTIVE_READERS, SETVAL, 0) == -1 ||
-        semctl(s_id, CAN_WRITE, SETVAL, 0) == -1 || 
+        semctl(s_id, ACTIVE_WRITERS, SETVAL, 0) == -1 || 
         semctl(s_id, WAITING_WRITERS, SETVAL, 0) == -1 ||
-		semctl(s_id, CAN_READ, SETVAL, 0) == -1
+		semctl(s_id, WAITING_READERS, SETVAL, 0) == -1
 		)	
     {
         perror("sem initialization error");

@@ -1,31 +1,28 @@
-#include <stdio.h> //stdout
+#include <stdio.h> 
 #include <sys/shm.h>
-#include <sys/stat.h> //S_IRUSR
+#include <sys/stat.h> 
 #include <sys/sem.h> 
 #include <wait.h>
 
 #include <time.h>
-#include <stdlib.h> //rand
-#include <unistd.h> //fork, sleep
+#include <stdlib.h> 
+#include <unistd.h> 
 #include <string.h>
-//#include <sys/types.h>
-//#include <sys/ipc.h>
 
 #define N_PROD 3
 #define N_CONS 3
-#define N_WORKS 3
+#define N_WORKS 4
 
-#define BIN_SEM 0
-#define BUF_FULL 1
-#define BUF_EMPTY 2
+#define BIN_SEM_I 0
+#define BUF_FULL_I 1
+#define BUF_EMPTY_I 2
 
 #define PROD_SLEEP_MIN 1
-#define PROD_SLEEP_MAX 2
+#define PROD_SLEEP_MAX 4
 
 #define CONS_SLEEP_MIN 1
-#define CONS_SLEEP_MAX 4
+#define CONS_SLEEP_MAX 7
 
-#define MYTAB "                                   "
 
 char *alphabet = "abcdefghijklmnopqrstuvwxyz";
 
@@ -36,17 +33,12 @@ typedef struct
     char buffer[N_WORKS];
 } buf_struct;
 
-// Производитель
-// Когда производит объект, значение семафора buffer_empty уменьшается если buffer_empty>0
-// Значение bin_sen также декрементируется, чтобы обеспечить монопольный доступ к буферу
-// Если производитель поместил элемент в ячейку буфера, то значение «buffer_full» инкрементируется. 
-// Значение mutex также увеличивается на 1, поскольку задача производителя выполнена.
 	
-struct sembuf PROD_LOCK[2] = {{BUF_EMPTY, -1, 0}, {BIN_SEM, -1, 0}};
-struct sembuf PROD_RELEASE[2] = {{BUF_FULL, 1, 0}, {BIN_SEM, 1, 0}};
+struct sembuf PROD_LOCK[2] = {{BUF_EMPTY_I, -1, 0}, {BIN_SEM_I, -1, 0}};
+struct sembuf PROD_RELEASE[2] = {{BUF_FULL_I, 1, 0}, {BIN_SEM_I, 1, 0}};
 
-struct sembuf CONS_LOCK[2] = {{BUF_FULL, -1, 0}, {BIN_SEM, -1, 0}};
-struct sembuf CONS_RELEASE[2] = {{BUF_EMPTY, 1, 0}, {BIN_SEM, 1, 0}};
+struct sembuf CONS_LOCK[2] = {{BUF_FULL_I, -1, 0}, {BIN_SEM_I, -1, 0}};
+struct sembuf CONS_RELEASE[2] = {{BUF_EMPTY_I, 1, 0}, {BIN_SEM_I, 1, 0}};
 
 
 
@@ -110,7 +102,7 @@ int consumer_run(buf_struct* const buf_t, const int sid, const int consid)
         char symb = buf_t->buffer[buf_t->cons_pos++];
 		
 
-        fprintf(stdout, "%s", MYTAB);
+        fprintf(stdout, "                                   ");
         fprintf(stdout, "| Consumer %d read: %c, sleep time=%d\n", consid + 1, symb, sleep_time);
 
         if (semop(sid, CONS_RELEASE, 2) == -1) 
@@ -129,14 +121,6 @@ int main()
     setbuf(stdout, NULL);
     int perms = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 	
-	//int shmget(key_t key, int size, int shmflg)
-	//значение key равно IPC_PRIVATE значит Создается новый разделяемый сегмент памяти с размером size 
-    //ключ IPC_PRIVATE - Набор семафоров могут использовать только процессы, Порожденные процессом, создавшим семафор.
-    //shmflg состоит из:
-		//IPC_CREAT - служит для создания нового сегмента. Если этого флага нет, то функция shmget() будет искать 
-			//сегмент, соответствующий ключу key и затем проверит, имеет ли пользователь права на доступ к сегменту.
-		//mode_flags(младшие 9 битов)
-			//указывают на права хозяина, группы и др.В данный момент права системой не используются.
     int fd = shmget(IPC_PRIVATE, sizeof(buf_struct), perms | IPC_CREAT);
     if (fd == -1) 
     {
@@ -144,11 +128,6 @@ int main()
         return 1;
     }
 	
-	// void *shmat(int shmid, const void *shmaddr, int shmflg);
-    // Функция shmat подстыковывает сегмент разделяемой памяти shmid к адресному пространству вызывающего процесса
-    // Функция shmat() возвращает указатель на сегмент
-    // shmaddr (второй аргумент) равно NULL, то система выбирает подходящий (неиспользуемый) адрес для подключения сегмента.
-    // 0 - видимо и чтение, и запись
     buf_struct* buf_t = shmat(fd, 0, 0);
     if (buf_t == (void*) - 1) 
     {
@@ -156,14 +135,6 @@ int main()
         return 1;
     }
 
-	// int semget( key_t key, int numb_sem, int flag);
-    // Функция semget() создает новый набор семафоров или открывает уже имеющийся. 
-    //В случае успешного завершения функция возвращает дескриптор семафора
-    //Параметр numb_sem задает количество семафоров в наборе. 
-	//Параметр key задает идентификатор семафора. 
-    //Если значением key является макрос IPC_PRIVATE, то создается набор семафоров, который смогут использовать только процессы,
-    //порожденные процессом, создавшим семафор.
-    //Параметр flag представляет собой результат побитового сложения прав доступа к семафору и константы IPC_CREATE.
     int isem_descr = semget(IPC_PRIVATE, 3, perms | IPC_CREAT);
     if (isem_descr == -1)
     {
@@ -171,9 +142,9 @@ int main()
         return 1;
     }
 	
-    if (semctl(isem_descr, BIN_SEM, SETVAL, 1) == -1 || // свободен
-        semctl(isem_descr, BUF_EMPTY, SETVAL, N_WORKS) == -1 || // пустой, а производитель декрементирует
-        semctl(isem_descr, BUF_FULL, SETVAL, 0) == -1)	// пустой, а производитель инкрементирует
+    if (semctl(isem_descr, BIN_SEM_I, SETVAL, 1) == -1 ||
+        semctl(isem_descr, BUF_EMPTY_I, SETVAL, N_WORKS) == -1 || 
+        semctl(isem_descr, BUF_FULL_I, SETVAL, 0) == -1)	
     {
         perror("sem initialization error");
         return 1;
@@ -227,16 +198,14 @@ int main()
             fprintf(stderr, "Child process %d terminated abnormally", child_pid);
         }
     }
-	// Функция shmdt() «отключает» разделяемый сегмент от адресного пространства процесса
+
     if (shmdt(buf_t) == -1)
     {
         perror("shmdt failed");
         return 1;
     }
 	
-	//Функция shmctl() позволяет изменять управляющие параметры сегмента
-	//int shmctl(int shmid, int cmd, struct shmid_ds *buf);
-	//IPC_RMID используется для пометки сегмента как удаленного.
+
     if (shmctl(fd, IPC_RMID, NULL) == -1) 
     {
         perror("shmctl with command IPC_RMID failed");
