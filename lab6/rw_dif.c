@@ -141,7 +141,7 @@ int main()
 		perror("CreateEvent (can_read) error");
 		return -1;
 	}
-	if ((can_write = CreateEvent(NULL, TRUE, TRUE, NULL)) == NULL)
+	if ((can_write = CreateEvent(NULL, TRUE, FALSE, NULL)) == NULL)
     {
 		perror("CreateEvent (can_write) error");
 		return -1;
