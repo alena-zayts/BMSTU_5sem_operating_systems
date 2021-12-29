@@ -7,8 +7,8 @@
 Используя sourser (sr.exe) получить дизассемблерный код обработчика аппаратного прерывания от системного таймера Int 8h.
 На основе полученного кода составить алгоритм работы обработчика Int 8h.
 Отчет должен содержать:
-•	полученный ассемблерный код с адресами команд и коментариями;
-•	графический алгоритм работы обработчика прерывания Int 8h
+* полученный ассемблерный код с адресами команд и коментариями;
+* графический алгоритм работы обработчика прерывания Int 8h
 
 ### 1.2. Изучение функций прерывания от системного таймера в системах разделения времени, изучение пересчета динамических приоритетов. 
 
@@ -25,9 +25,10 @@
 
 Написать программу, переводящую компьютер в защищенный режим (32-разраядный режим работы компьютеров на базе процессоров Intel). Программа начинает работать в реальном режиме. Для перевода в защищенный режим выполняются необходимые действия. В защищенном режиме программа работает на нулевом уровне привилегий.
 В защищенном режиме программа должна: 
-•	определить объем доступной физической памяти; 
-•	 осуществить ввод с клавиатуры строки с выводом введенной строки на экран;
-•	получить информацию на экране от системного таймера или в виде мигающего курсора, или в виде количества тиков с момента запуска программы на выполнение, или в виде значения реального времени.
+* определить объем доступной физической памяти; 
+* осуществить ввод с клавиатуры строки с выводом введенной строки на экран;
+* получить информацию на экране от системного таймера или в виде мигающего курсора, или в виде количества тиков с момента запуска программы на выполнение, или в виде значения реального времени.
+
 Затем программа корректно возвращается в реальный режим с соответствующими сообщениями.
 
 ### 4. Процессы (Unix). Системные вызовы fork() и exec().
@@ -45,46 +46,44 @@
 ### 6. Реализация монитора Хоара «Читатели-писатели» под ОС Windows
 В лабораторной работе необходимо разработать многопоточное приложение, используя API ОС Windows такие как, потоки, события (event) и мьютексы (mutex). Потоки разделяют единственную глобальную переменную. Приложение реализует монитор Хоара «Читатели-писатели».
 
+**where is Ubuntu:**
 
 C:\Users\alena\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs\home\alena
 
 
 
+## Help
+### labs
+https://github.com/TheSawIsTheLaw/OperatingSystems/tree/master/sem_01
 
-1. 
+https://github.com/hackfeed/os-5th-sem-labs
+
+https://github.com/SpectralOne/bmstu-os/tree/master/sem5
+
+https://github.com/bmstu-ics7/operating-systems/tree/8cff6a38edff1a2a4a8e639c243992b1890324f2/sem_01  
+
+https://github.com/Sunshine-ki/BMSTU5_OS
+
+https://github.com/Winterpuma/bmstu_OS/tree/master/5_semester
+
+https://github.com/mRrvz/bmstu-os/tree/master/sem_01
+
+ https://github.com/AnaNek/Operating_systems/tree/master/sem_05
+
+https://github.com/NastyRu/Operating_systems/tree/master/semestr1
+
+https://github.com/Kulikov17/OS_BMSTU
+
+https://github.com/TinyMarcus/OS/tree/master/sem_05
+
+https://github.com/ZeynalovZ/Operating-Systems/tree/master/sem1
 
 
-ОСИ 6 лаб
+### exam
 
-(Якуба (TheSawIsTheLaw))(6 лаб) https://github.com/TheSawIsTheLaw/OperatingSystems/tree/master/sem_01
+ЛЕКЦИИ https://github.com/chrislvt/OS
 
-(Кононенко (hackfeed))(6 лаб) https://github.com/hackfeed/os-5th-sem-labs
-
-(Богаченко (SpectralOne))(6 лаб) https://github.com/SpectralOne/bmstu-os/tree/master/sem5
-
-(Wilsem)(6 лаб) https://github.com/bmstu-ics7/operating-systems/tree/8cff6a38edff1a2a4a8e639c243992b1890324f2/sem_01  
-
-(Sunshine-ki )(6 лаб +1) https://github.com/Sunshine-ki/BMSTU5_OS
-
-(Winterpuma (оберган))(другой препод, только 1 и 5) https://github.com/Winterpuma/bmstu_OS/tree/master/5_semester
-
-(Романов (mRrvz))(6 лаб) https://github.com/mRrvz/bmstu-os/tree/master/sem_01
-
-(Anastasia Neklepaeva) (6 лаб) https://github.com/AnaNek/Operating_systems/tree/master/sem_05
-
-(NastyRu)(6 лаб) https://github.com/NastyRu/Operating_systems/tree/master/semestr1
-
-(1, 2, 4) https://github.com/Kulikov17/OS_BMSTU
-
-(TinyMarcus)(6 лаб) https://github.com/TinyMarcus/OS/tree/master/sem_05
-
-(2, 3, 4) https://github.com/ZeynalovZ/Operating-Systems/tree/master/sem1
-
-рк
-
-ОСИ КРУТЫЕ ЛЕКЦИИ https://github.com/chrislvt/OS
-
-ОСИ КРУТО ПО БИЛЕТАМ https://github.com/NastyRu/Operating_systems/tree/master/semestr1
+ПО БИЛЕТАМ https://github.com/NastyRu/Operating_systems/tree/master/semestr1
 
 ОСИ экз (от Алис) https://github.com/Sunshine-ki/BMSTU5_OS
 
